@@ -51,4 +51,4 @@ jupyter book build
 jupyter book start
 ```
 
-Last updated: YYYY-MM-DD
+Last updated: 2026-04-09
