@@ -50,3 +50,5 @@ jupyter book clean
 jupyter book build
 jupyter book start
 ```
+
+Last updated: YYYY-MM-DD
