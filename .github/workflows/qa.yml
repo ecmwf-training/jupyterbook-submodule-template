@@ -17,6 +17,9 @@ on:
         type: string
         default: ''
 
+env:
+  CDSAPI_KEY: ${{ secrets.CDS_API_TEST_KEY }}
+
 jobs:
   notebook-qa:
     uses: ecmwf-training/gha-ci-notebook-checks/.github/workflows/notebook-qa.yml@main
