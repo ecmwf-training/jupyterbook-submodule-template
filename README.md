@@ -16,7 +16,7 @@ table of contents (`toc`) in the `myst.yml` file, e.g.:
     - my-new-notebook.ipynb
     - my-new-markdown.md
 ```
-Feel free to remove any of the template/placeholder content that is currently listed. 
+Feel free to remove any of the template/placeholder content that is currently listed.
 
 
 ## Branch architecture
