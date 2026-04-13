@@ -23,7 +23,9 @@ project:
       template: plain_latex_book
       output: exports/book.pdf
   toc:
-    - file: README.md
+    - file: intro.md
+    - title: README instructions
+      file: README.md
     - file: template-notebook.ipynb
 site:
   template: book-theme
