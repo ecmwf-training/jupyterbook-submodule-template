@@ -105,4 +105,15 @@ Jupyter Book.
 
 ### Run the Notebook QA checks
 
-To run the quality assurance checks, the
+To run the quality assurance checks, run the following command:
+
+```
+make qa
+```
+
+:::{note}
+The `make qa` command will clone a git repository to a hidden directory (.qa-tools)
+and install the dependancies required to execute all the quality assurance checks.
+It is recommended that you do this in a virtual environment.
+:::
+
