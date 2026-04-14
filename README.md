@@ -74,24 +74,42 @@ Below are examples for working with `conda` and `uv` package managers.
 conda create -y -n jupyter-build -c conda-forge python=3.12
 conda activate jupyter-build
 conda install pip
+
+# Install the depdencies used by the CI checks and jupyterbook build
+pip install -r .github/ci-requirements.txt
+
+# Install the requirements for the notebooks to run
+conda env update -f environment.yml
 ```
 
 **uv**:
 ```sh
-uv venv .venv --python 3.12 
+uv venv .venv --python 3.12
+source .venv/bin/activate 
+
+# Install the depdencies used by the CI checks and jupyterbook build
+uv pip install -r .github/ci-requirements.txt
+
+# Install the requirements for the notebooks to run
+uv pip install -r requirements.txt
 ```
 
-You can then install the CI dependencies with:
-```sh
-pip install -r .github/ci-requirements.txt
-```
+### Build and render the book locally
 
-
-Then build and render the book
 ```sh
 jupyter book clean
 jupyter book build
 jupyter book start
 ```
 
-Last updated: 2026-04-09
+You will then be provided with a `localhost` link to view your notebook.
+
+:::{note}
+If you have multiple instances of Jupyter Book running on your computer,
+the actions may fail as they are not able find an available port to host the
+Jupyter Book.
+:::
+
+### Run the Notebook QA checks
+
+To run the quality assurance checks, the
