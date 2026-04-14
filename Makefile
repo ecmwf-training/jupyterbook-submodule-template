@@ -22,7 +22,7 @@ QA_TOOLS_REPO := https://github.com/ecmwf-training/reusable-workflows
 
 TEMPLATE_REPO   := https://github.com/ecmwf-training/jupyterbook-submodule-template
 TEMPLATE_REMOTE := template
-TEMPLATE_BRANCH := main
+TEMPLATE_BRANCH := develop
 TEMPLATE_PATHS  := .github Makefile setup.cfg
 
 NOTEBOOKS  ?= $(shell find . -name "*.ipynb" \
@@ -67,6 +67,7 @@ template-update: ## Sync core components (.github/, Makefile, setup.cfg) from th
 	fi
 	git fetch $(TEMPLATE_REMOTE) $(TEMPLATE_BRANCH)
 	git checkout $(TEMPLATE_REMOTE)/$(TEMPLATE_BRANCH) -- $(TEMPLATE_PATHS)
+	git reset
 	@echo ""
 	@echo "Core components updated from template. Review changes with: git diff HEAD"
 	@echo "Commit when satisfied:  git add $(TEMPLATE_PATHS) && git commit -m 'chore: sync core components from template'"
