@@ -1,2 +1,0 @@
-gha-ci-notebook-checks @ git+https://github.com/ecmwf-training/reusable-workflows
-jupyter-book>=2,<3

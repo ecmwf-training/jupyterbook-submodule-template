@@ -22,7 +22,9 @@ QA_TOOLS_REPO := https://github.com/ecmwf-training/reusable-workflows
 
 NOTEBOOKS  ?= $(shell find . -name "*.ipynb" \
                   -not -path "*/.ipynb_checkpoints/*" \
-                  -not -path "*/$(QA_TOOLS)/*")
+                  -not -path "*/$(QA_TOOLS)/*" \
+                  -not -path "*/_build/*" \
+				  )
 
 # ---------------------------------------------------------------------------
 # Default target
@@ -34,6 +36,26 @@ NOTEBOOKS  ?= $(shell find . -name "*.ipynb" \
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 	  | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+# ---------------------------------------------------------------------------
+# Environment setup targets
+# ---------------------------------------------------------------------------
+
+.PHONY: conda-env-update
+conda-env-update:
+	conda install "jupyter-book>=2,<3" && conda env update -f environment.yml
+
+.PHONY: uv-env-update
+uv-env-update:
+	uv pip install "jupyter-book>=2,<3" && uv pip install -r requirements.txt
+
+# ---------------------------------------------------------------------------
+# Jupyter Book targets
+# ---------------------------------------------------------------------------
+
+jupyter-book:
+	jupyter book clean -y && jupyter book build && jupyter book start
+
 
 # ---------------------------------------------------------------------------
 # Tool setup
@@ -51,7 +73,7 @@ qa-tools-update: ## Update the QA tools repository to the latest main
 
 .PHONY: qa-install
 qa-install: $(QA_TOOLS) ## Install QA dependencies into the active Python environment
-	pip install -r .github/ci-requirements.txt
+	cd $(QA_TOOLS) && pip install .
 
 # ---------------------------------------------------------------------------
 # Individual checks
@@ -73,7 +95,9 @@ qa-pynblint: $(QA_TOOLS) ## (2.2.3) Run pynblint on each notebook
 	failed=0; \
 	for nb in $(NOTEBOOKS); do \
 	  echo "Checking: $$nb"; \
-	  out=$$(mktemp /tmp/pynblint_XXXXXX.json); \
+	  out=/tmp/pynblint_XXXXXX.json; \
+	  rm -f "$$out"; \
+	  mktemp -u "$$out" > /dev/null; \
 	  if [ -n "$$PYNBLINT_EXCLUDE" ]; then \
 	    pynblint "$$nb" -o "$$out" --exclude "$$PYNBLINT_EXCLUDE"; \
 	  else \
@@ -130,4 +154,18 @@ qa-changelog: ## (4.2.3) Check that a non-empty CHANGELOG.md file exists
 # ---------------------------------------------------------------------------
 
 .PHONY: qa
-qa: qa-lint qa-format qa-pynblint qa-figures qa-metadata qa-license qa-changelog ## Run all static QA checks
+qa: $(QA_TOOLS) ## Run all static QA checks (continues on failure, reports a summary)
+	@failed=""; \
+	for target in qa-lint qa-format qa-pynblint qa-figures qa-metadata qa-license qa-changelog; do \
+	  echo ""; \
+	  echo "==> $$target"; \
+	  $(MAKE) --no-print-directory $$target || failed="$$failed $$target"; \
+	done; \
+	echo ""; \
+	if [ -n "$$failed" ]; then \
+	  echo "❌ Failed checks:"; \
+	  for t in $$failed; do echo "   $$t"; done; \
+	  exit 1; \
+	else \
+	  echo "✅ All checks passed"; \
+	fi

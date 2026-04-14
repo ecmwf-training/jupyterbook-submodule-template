@@ -63,7 +63,7 @@ git clone git@github.com:ecmwf-training/jupyterbook-submodule-template.git
 cd jupyterbook-submodule-template
 ```
 
-### Create environment and install ci dependancies
+### Create environment and install dependancies for building the Jupyter Book
 
 Create a clean environment using the package manager of your preference,
 and install the CI dependencies.
@@ -71,35 +71,28 @@ Below are examples for working with `conda` and `uv` package managers.
 
 **conda**:
 ```sh
+# Create and activate a conda environment.
 conda create -y -n jupyter-build -c conda-forge python=3.12
 conda activate jupyter-build
-conda install pip
 
-# Install the depdencies used by the CI checks and jupyterbook build
-pip install -r .github/ci-requirements.txt
-
-# Install the requirements for the notebooks to run
-conda env update -f environment.yml
+# Install the depdencies used by jupyterbook build and the notebooks (specified in requirements.txt)
+make conda-env-update
 ```
 
 **uv**:
 ```sh
+# Create and activate a uv virtual environment.
 uv venv .venv --python 3.12
 source .venv/bin/activate 
 
-# Install the depdencies used by the CI checks and jupyterbook build
-uv pip install -r .github/ci-requirements.txt
-
-# Install the requirements for the notebooks to run
-uv pip install -r requirements.txt
+# Install the depdencies used by jupyterbook build and the notebooks (specified in requirements.txt)
+make uv-env-update
 ```
 
 ### Build and render the book locally
 
 ```sh
-jupyter book clean
-jupyter book build
-jupyter book start
+make jupyter-book
 ```
 
 You will then be provided with a `localhost` link to view your notebook.
