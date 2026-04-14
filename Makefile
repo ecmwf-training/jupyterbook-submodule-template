@@ -20,6 +20,11 @@ CHECKERS   := $(QA_TOOLS)/process-notebooks/checkers
 QA_CONFIG  := .github/notebook-qa.yml
 QA_TOOLS_REPO := https://github.com/ecmwf-training/reusable-workflows
 
+TEMPLATE_REPO   := https://github.com/ecmwf-training/jupyterbook-submodule-template
+TEMPLATE_REMOTE := template
+TEMPLATE_BRANCH := main
+TEMPLATE_PATHS  := .github Makefile setup.cfg
+
 NOTEBOOKS  ?= $(shell find . -name "*.ipynb" \
                   -not -path "*/.ipynb_checkpoints/*" \
                   -not -path "*/$(QA_TOOLS)/*" \
@@ -48,6 +53,23 @@ conda-env-update:
 .PHONY: uv-env-update
 uv-env-update:
 	uv pip install "jupyter-book>=2,<3" && uv pip install -r requirements.txt
+
+# ---------------------------------------------------------------------------
+# Template sync (for repositories created from this template)
+# ---------------------------------------------------------------------------
+
+.PHONY: template-update
+template-update: ## Sync core components (.github/, Makefile, setup.cfg) from the upstream template
+	@if git remote get-url $(TEMPLATE_REMOTE) > /dev/null 2>&1; then \
+	  git remote set-url $(TEMPLATE_REMOTE) $(TEMPLATE_REPO); \
+	else \
+	  git remote add $(TEMPLATE_REMOTE) $(TEMPLATE_REPO); \
+	fi
+	git fetch $(TEMPLATE_REMOTE) $(TEMPLATE_BRANCH)
+	git checkout $(TEMPLATE_REMOTE)/$(TEMPLATE_BRANCH) -- $(TEMPLATE_PATHS)
+	@echo ""
+	@echo "Core components updated from template. Review changes with: git diff HEAD"
+	@echo "Commit when satisfied:  git add $(TEMPLATE_PATHS) && git commit -m 'chore: sync core components from template'"
 
 # ---------------------------------------------------------------------------
 # Jupyter Book targets

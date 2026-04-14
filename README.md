@@ -117,3 +117,28 @@ and install the dependancies required to execute all the quality assurance check
 It is recommended that you do this in a virtual environment.
 :::
 
+## Syncing core components from the template
+
+This repository was created from [`jupyterbook-submodule-template`](https://github.com/ecmwf-training/jupyterbook-submodule-template).
+Updates to the template's core components (`.github/`, `Makefile`, `setup.cfg`) can be pulled into
+your repository at any time:
+
+```sh
+make template-update
+```
+
+This adds the template as a git remote named `template`, fetches the `main` branch, and checks
+out the core files into your working tree. **No commit is made automatically** — all changes
+are left unstaged so you can review them before deciding what to keep.
+
+:::{important}
+Local changes to the synced files will **not** be preserved automatically.
+Before running `make template-update`, note any customisations you have made to
+`.github/`, `Makefile`, or `setup.cfg`. After the sync, use `git diff HEAD` to
+review what changed and manually reapply any local modifications before committing.
+
+The file `.github/notebook-qa.yml` is included in the `.github/` directory and will
+also be overwritten. If you have customised pynblint rules or disabled checks in that
+file, back up your changes before syncing.
+:::
+
