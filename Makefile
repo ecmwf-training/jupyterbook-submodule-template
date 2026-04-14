@@ -1,0 +1,133 @@
+# Notebook QA — local runner
+# Mirrors the checks performed by the CI workflow in .github/workflows/qa.yml.
+#
+# Quick start:
+#   make qa-install        # install QA tools into the current Python environment
+#   make qa                # run all static checks
+#   make qa NOTEBOOKS=template-notebook.ipynb  # limit to one notebook
+#
+# Checks NOT available locally (CI only):
+#   links        — requires the lychee Rust binary
+#   accessibility — requires the jupyterlab-a11y-checker GitHub Action
+#   execute       — runs notebooks end-to-end (use your own conda env)
+
+# ---------------------------------------------------------------------------
+# Variables
+# ---------------------------------------------------------------------------
+
+QA_TOOLS   := .qa-tools
+CHECKERS   := $(QA_TOOLS)/process-notebooks/checkers
+QA_CONFIG  := .github/notebook-qa.yml
+QA_TOOLS_REPO := https://github.com/ecmwf-training/reusable-workflows
+
+NOTEBOOKS  ?= $(shell find . -name "*.ipynb" \
+                  -not -path "*/.ipynb_checkpoints/*" \
+                  -not -path "*/$(QA_TOOLS)/*")
+
+# ---------------------------------------------------------------------------
+# Default target
+# ---------------------------------------------------------------------------
+
+.DEFAULT_GOAL := help
+
+.PHONY: help
+help: ## Show this help message
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+	  | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+# ---------------------------------------------------------------------------
+# Tool setup
+# ---------------------------------------------------------------------------
+
+$(QA_TOOLS):
+	git clone --depth=1 $(QA_TOOLS_REPO) $(QA_TOOLS)
+
+.PHONY: qa-tools
+qa-tools: $(QA_TOOLS) ## Clone the QA tools repository (skipped if already present)
+
+.PHONY: qa-tools-update
+qa-tools-update: ## Update the QA tools repository to the latest main
+	cd $(QA_TOOLS) && git pull --ff-only
+
+.PHONY: qa-install
+qa-install: $(QA_TOOLS) ## Install QA dependencies into the active Python environment
+	pip install -r .github/ci-requirements.txt
+
+# ---------------------------------------------------------------------------
+# Individual checks
+# ---------------------------------------------------------------------------
+
+.PHONY: qa-lint
+qa-lint: ## (2.2.3) Lint code cells with ruff check
+	ruff check $(NOTEBOOKS)
+
+.PHONY: qa-format
+qa-format: ## (2.2.3) Check code-cell formatting with ruff format
+	ruff format --check --diff $(NOTEBOOKS)
+
+.PHONY: qa-pynblint
+qa-pynblint: $(QA_TOOLS) ## (2.2.3) Run pynblint on each notebook
+	@PYNBLINT_EXCLUDE=$$(PYTHONPATH=$(CHECKERS) python -c \
+	  "from qa_config import get_pynblint_exclude, load_config; \
+	   print(get_pynblint_exclude(load_config('$(QA_CONFIG)')))"); \
+	failed=0; \
+	for nb in $(NOTEBOOKS); do \
+	  echo "Checking: $$nb"; \
+	  out=$$(mktemp /tmp/pynblint_XXXXXX.json); \
+	  if [ -n "$$PYNBLINT_EXCLUDE" ]; then \
+	    pynblint "$$nb" -o "$$out" --exclude "$$PYNBLINT_EXCLUDE"; \
+	  else \
+	    pynblint "$$nb" -o "$$out"; \
+	  fi; \
+	  lint_count=$$(python -c "import json; print(len(json.load(open('$$out'))['lints']))"); \
+	  if [ "$$lint_count" -gt 0 ]; then \
+	    echo "❌ $$nb has $$lint_count pynblint issue(s):"; \
+	    python -c "\
+import json; \
+data = json.load(open('$$out')); \
+[print(f\"  - ({l['slug']}) {l['description']}\") for l in data['lints']]"; \
+	    failed=1; \
+	  else \
+	    echo "✅ $$nb passed pynblint"; \
+	  fi; \
+	  rm -f "$$out"; \
+	done; \
+	exit $$failed
+
+.PHONY: qa-figures
+qa-figures: $(QA_TOOLS) ## (3.3.2) Check figure attribution in notebooks
+	PYTHONPATH=$(CHECKERS) python $(CHECKERS)/figure_checker.py \
+	  --config $(QA_CONFIG) $(NOTEBOOKS)
+
+.PHONY: qa-metadata
+qa-metadata: $(QA_TOOLS) ## (1.2.6) Check version metadata in notebooks
+	PYTHONPATH=$(CHECKERS) python $(CHECKERS)/metadata_checker.py \
+	  --config $(QA_CONFIG) $(NOTEBOOKS)
+
+.PHONY: qa-data-source
+qa-data-source: $(QA_TOOLS) ## (1.2.8) Check data source attribution (warning only)
+	-PYTHONPATH=$(CHECKERS) python $(CHECKERS)/data_source_checker.py \
+	  --config $(QA_CONFIG) $(NOTEBOOKS)
+
+.PHONY: qa-license
+qa-license: ## (1.2.4) Check that a non-empty LICENSE file exists
+	@if [ -s LICENSE ]; then \
+	  echo "✅ LICENSE file is present and non-empty"; \
+	else \
+	  echo "❌ LICENSE file is missing or empty"; exit 1; \
+	fi
+
+.PHONY: qa-changelog
+qa-changelog: ## (4.2.3) Check that a non-empty CHANGELOG.md file exists
+	@if [ -s CHANGELOG.md ]; then \
+	  echo "✅ CHANGELOG.md file is present and non-empty"; \
+	else \
+	  echo "❌ CHANGELOG.md file is missing or empty"; exit 1; \
+	fi
+
+# ---------------------------------------------------------------------------
+# Composite target
+# ---------------------------------------------------------------------------
+
+.PHONY: qa
+qa: qa-lint qa-format qa-pynblint qa-figures qa-metadata qa-license qa-changelog ## Run all static QA checks

@@ -170,3 +170,6 @@ _build/
 
 # Ignore the data_dir directory, which is used to store data files during notebook runtime
 data_dir/
+
+# Local QA tools clone (see Makefile / make qa-install)
+.qa-tools/
