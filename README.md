@@ -55,14 +55,37 @@ the repository. For example the code must meet acceptable coding standards and t
 must run to completion. This check is considered as part of the review process when accepting
 new notebooks to the repository.
 
-## Build the Jupyter Book locally
+## Build and check the Jupyter Book locally
 
-Clone the repository and create a conda/mamba environment for building Jupyter Books:
+Clone the repository and enter the directory:
+```sh
+git clone git@github.com:ecmwf-training/jupyterbook-submodule-template.git
+cd jupyterbook-submodule-template
+```
+
+### Create environment and install ci dependancies
+
+Create a clean environment using the package manager of your preference,
+and install the CI dependencies.
+Below are examples for working with `conda` and `uv` package managers.
+
+**conda**:
 ```sh
 conda create -y -n jupyter-build -c conda-forge python=3.12
 conda activate jupyter-build
-conda install "jupyter-book>=2,<3"
+conda install pip
 ```
+
+**uv**:
+```sh
+uv venv .venv --python 3.12 
+```
+
+You can then install the CI dependencies with:
+```sh
+pip install -r .github/ci-requirements.txt
+```
+
 
 Then build and render the book
 ```sh

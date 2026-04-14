@@ -167,3 +167,6 @@ cython_debug/
 .ipynb_checkpoints/
 
 _build/
+
+# Ignore the data_dir directory, which is used to store data files during notebook runtime
+data_dir/
