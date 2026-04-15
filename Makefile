@@ -49,10 +49,12 @@ help: ## Show this help message
 .PHONY: conda-env-update
 conda-env-update:
 	conda install "jupyter-book>=2,<3" && conda env update -f environment.yml
+	$(MAKE) qa-install
 
 .PHONY: uv-env-update
 uv-env-update:
-	uv pip install "jupyter-book>=2,<3" && uv pip install -r requirements.txt
+	uv pip install "jupyter-book>=2,<3" && uv pip install pip &&  uv pip install -r requirements.txt
+	$(MAKE) qa-install
 
 # ---------------------------------------------------------------------------
 # Template sync (for repositories created from this template)
@@ -96,7 +98,7 @@ qa-tools-update: ## Update the QA tools repository to the latest main
 
 .PHONY: qa-install
 qa-install: $(QA_TOOLS) ## Install QA dependencies into the active Python environment
-	cd $(QA_TOOLS) && pip install .
+	cd $(QA_TOOLS) && python -m pip install .
 
 # ---------------------------------------------------------------------------
 # Individual checks

@@ -3,9 +3,24 @@
 This repository is a GitHub **template** for creating and maintaining a submodule that
 can be used in ECMWF Jupyter Books for learning and documentation resources.
 
+## Forking this repository
+
+It is expected that external contributions are provided as pull requests
+from forked repositories, as documented more thoroughly in the
+[codex guidelines](https://github.com/ecmwf/codex/blob/main/Guidelines/External-Contributions.md).
+
+When creating a fork of this repository there are several additional steps
+you should take to ensure that things work as expected.
+1. **Activate the github actions**
+    - Navigate to the "Actions" tab at the top of the github webpage and click the button to enable actions.
+2. **Set the github pages to build from github Actions**
+    - Navigate to the "Settings", then to "Pages" in the left hand panel. In the "Build and deployment" section, use the dropdown and select "GitHubActions"
+3. **Add a valid CDS API key to the secrets** (*Optional, required if downloading data from the CDS*)
+    - Navigate to the "Settings", then to "Secrets and variables" -> "Actions" in the left hand panel. Click the "New repository secret" button and add a new secret with the Name: `CDSAPI_KEY`. The value of the Secret should be set to your CDS API key which you can find on [your profile page in the CDS](https://cds.climate.copernicus.eu/profile).
+
 ## Adding notebooks and markdown content
 
-If creating a notebook please use the {doc}`./template-notebook` to ensure you
+If creating a notebook please use the [Template notebook](./template-notebook) to ensure you
 are following the expected guidelines.
 Markdown content should follow a similar structure as this README.md file.
 To make the added content appear in the Jupyter Book rendered pages, you must add the content to the
@@ -17,7 +32,6 @@ table of contents (`toc`) in the `myst.yml` file, e.g.:
     - my-new-markdown.md
 ```
 Feel free to remove any of the template/placeholder content that is currently listed.
-
 
 ## Branch architecture
 
@@ -57,11 +71,7 @@ new notebooks to the repository.
 
 ## Build and check the Jupyter Book locally
 
-Clone the repository and enter the directory:
-```sh
-git clone git@github.com:ecmwf-training/jupyterbook-submodule-template.git
-cd jupyterbook-submodule-template
-```
+The following instructions assume you have cloned the repository and are in the top-level directory of the repository.
 
 ### Create environment and install dependancies for building the Jupyter Book
 
@@ -75,7 +85,8 @@ Below are examples for working with `conda` and `uv` package managers.
 conda create -y -n jupyter-build -c conda-forge python=3.12
 conda activate jupyter-build
 
-# Install the depdencies used by jupyterbook build and the notebooks (specified in requirements.txt)
+# Install the depdencies used by jupyterbook build, the quality assurance checks
+# and to run the notebooks (specified in requirements.txt)
 make conda-env-update
 ```
 
@@ -85,7 +96,8 @@ make conda-env-update
 uv venv .venv --python 3.12
 source .venv/bin/activate 
 
-# Install the depdencies used by jupyterbook build and the notebooks (specified in requirements.txt)
+# Install the depdencies used by jupyterbook build, the quality assurance checks
+# and to run the notebooks (specified in requirements.txt)
 make uv-env-update
 ```
 
@@ -142,4 +154,3 @@ also be overwritten. If you have customised pynblint rules or disabled checks in
 file, back up your changes before syncing.
 :::
 
- 
