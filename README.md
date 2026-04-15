@@ -132,8 +132,8 @@ It is recommended that you do this in a virtual environment.
 ## Syncing core components from the template
 
 This repository was created from [`jupyterbook-submodule-template`](https://github.com/ecmwf-training/jupyterbook-submodule-template).
-Updates to the template's core components (`.github/`, `Makefile`, `setup.cfg`) can be pulled into
-your repository at any time:
+Updates to the template's core components (`.github/`, `Makefile`, `setup.cfg`, `README.md`)
+can be pulled into your repository at any time:
 
 ```sh
 make template-update
