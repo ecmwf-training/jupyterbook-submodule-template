@@ -23,7 +23,7 @@ QA_TOOLS_REPO := https://github.com/ecmwf-training/reusable-workflows
 TEMPLATE_REPO   := https://github.com/ecmwf-training/jupyterbook-submodule-template
 TEMPLATE_REMOTE := template
 TEMPLATE_BRANCH := develop
-TEMPLATE_PATHS  := .github Makefile setup.cfg
+TEMPLATE_PATHS  := .github Makefile setup.cfg README.md
 
 NOTEBOOKS  ?= $(shell find . -name "*.ipynb" \
                   -not -path "*/.ipynb_checkpoints/*" \
