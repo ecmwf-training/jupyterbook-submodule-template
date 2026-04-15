@@ -81,12 +81,13 @@ Below are examples for working with `conda` and `uv` package managers.
 
 **conda**:
 ```sh
-# Create and activate a conda environment.
+# Create a conda environment, this only needs to be executed the once.
 conda create -y -n jupyter-build -c conda-forge python=3.12
+
+# To activate the conda environment.
 conda activate jupyter-build
 
-# Install the depdencies used by jupyterbook build, the quality assurance checks
-# and to run the notebooks (specified in requirements.txt)
+# Install the depdencies used by jupyterbook build to run the notebooks (specified in requirements.txt)
 make conda-env-update
 ```
 
@@ -94,10 +95,11 @@ make conda-env-update
 ```sh
 # Create and activate a uv virtual environment.
 uv venv .venv --python 3.12
+
+# To activate the uv environment
 source .venv/bin/activate 
 
-# Install the depdencies used by jupyterbook build, the quality assurance checks
-# and to run the notebooks (specified in requirements.txt)
+# Install the depdencies used by jupyterbook build and to run the notebooks (specified in requirements.txt)
 make uv-env-update
 ```
 
