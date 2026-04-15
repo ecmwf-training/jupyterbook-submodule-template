@@ -5,13 +5,14 @@
 
 # # Notebooks to skip entirely (all checks), supports glob patterns
 # skip_notebooks:
-#   - "template-notebook.ipynb"
+#   - "./template-notebook.ipynb"
 
 # Per-notebook check configuration
-# notebooks:
-#   "notebooks/example.ipynb":
-#     skip:
-#       - figures
+notebooks:
+  "./template-notebook.ipynb":
+    skip:
+      - metadata
+      - pynblint
 
 # Test configuration
 require_tests: false     # Set true to fail when no test files exist
