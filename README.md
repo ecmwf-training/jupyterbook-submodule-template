@@ -3,7 +3,11 @@
 This repository is a GitHub **template** for creating and maintaining a submodule that
 can be used in ECMWF Jupyter Books for learning and documentation resources.
 
-## Forking this repository
+*Please replace the above text with a description of the sub-module*
+
+## For contributors
+
+### Forking this repository
 
 It is expected that external contributions are provided as pull requests
 from forked repositories, as documented more thoroughly in the
@@ -18,7 +22,7 @@ you should take to ensure that things work as expected.
 3. **Add a valid CDS API key to the secrets** (*Optional, required if downloading data from the CDS*)
     - Navigate to the "Settings", then to "Secrets and variables" -> "Actions" in the left hand panel. Click the "New repository secret" button and add a new secret with the Name: `CDSAPI_KEY`. The value of the Secret should be set to your CDS API key which you can find on [your profile page in the CDS](https://cds.climate.copernicus.eu/profile).
 
-## Adding notebooks and markdown content
+### Adding notebooks and markdown content
 
 If creating a notebook please use the [Template notebook](./template-notebook) to ensure you
 are following the expected guidelines.
@@ -33,7 +37,7 @@ table of contents (`toc`) in the `myst.yml` file, e.g.:
 ```
 Feel free to remove any of the template/placeholder content that is currently listed.
 
-## Branch architecture
+### Branch architecture
 
 This template has been designed to be used as a sub-module for a parent repository.
 Therefore the default branch for this repository is **develop**, and this branch is used to
@@ -43,7 +47,7 @@ The **main** branch is reserved for published content and will be maintained by 
 The repository includes github-actions which will automatically build a develop version of
 the Jupyter Book that can be used for review purposes.
 
-## GitHub Actions
+### GitHub Actions
 
 :::{note}
 This template is designed to be used as a sub-module for a parent repository.
@@ -53,7 +57,7 @@ the actions are associated to the develop branch.
 
 There are two github actions in place for this repository:
 
-### Jupyter Book Deploy
+#### Jupyter Book Deploy
 
 The **`Jupyter Book Deploy`** action builds the Jupyter Book using the same procedure as
 local build described below then, if action is running on the `develop` branch, the build
@@ -62,18 +66,18 @@ The action is activated or when a change is made to the `develop` branch
 (e.g. after merging a pull request) or when a pull request to the `develop` branch is opened.
 It can also be triggered manually from the Actions tab in the github page.
 
-### Notebook QA
+#### Notebook QA
 
 The **`Notebook QA`** action runs a series of Quality Assessment checks on the notebooks in
 the repository. For example the code must meet acceptable coding standards and the notebooks
 must run to completion. This check is considered as part of the review process when accepting
 new notebooks to the repository.
 
-## Build and check the Jupyter Book locally
+### Build and check the Jupyter Book locally
 
 The following instructions assume you have cloned the repository and are in the top-level directory of the repository.
 
-### Create environment and install dependancies for building the Jupyter Book
+#### Create environment and install dependancies for building the Jupyter Book
 
 Create a clean environment using the package manager of your preference,
 and install the CI dependencies.
@@ -103,7 +107,7 @@ source .venv/bin/activate
 make uv-env-update
 ```
 
-### Build and render the book locally
+#### Build and render the book locally
 
 ```sh
 make jupyter-book
@@ -117,7 +121,7 @@ the actions may fail as they are not able find an available port to host the
 Jupyter Book.
 :::
 
-### Run the Notebook QA checks
+#### Run the Notebook QA checks
 
 To run the quality assurance checks, run the following command:
 
@@ -131,7 +135,7 @@ and install the dependancies required to execute all the quality assurance check
 It is recommended that you do this in a virtual environment.
 :::
 
-## Syncing core components from the template
+### Syncing core components from the template
 
 This repository was created from [`jupyterbook-submodule-template`](https://github.com/ecmwf-training/jupyterbook-submodule-template).
 Updates to the template's core components (`.github/`, `Makefile`, `setup.cfg`, `README.md`)
