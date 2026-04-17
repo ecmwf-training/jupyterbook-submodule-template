@@ -21,4 +21,5 @@ jobs:
     uses: ecmwf-training/reusable-workflows/.github/workflows/notebook-qa.yml@main
     with:
       notebooks: ${{ inputs.notebooks || '' }}
-    secrets: inherit
+    secrets:
+      CDSAPI_KEY: ${{ secrets.CDSAPI_KEY }}
