@@ -7,11 +7,11 @@ can be used in ECMWF Jupyter Books for learning and documentation resources.
 
 ## For contributors
 
-### Forking this repository
-
 It is expected that external contributions are provided as pull requests
 from forked repositories, as documented more thoroughly in the
 [codex guidelines](https://github.com/ecmwf/codex/blob/main/Guidelines/External-Contributions.md).
+
+### Forking this repository
 
 When creating a fork of this repository there are several additional steps
 you should take to ensure that things work as expected.
